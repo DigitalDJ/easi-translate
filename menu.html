@@ -53,7 +53,7 @@
       <div class="container-fluid pb-3">
         <div class="row d-flex flex-wrap align-items-center">
           <div class="col shop-img">
-            <img src="{{shop_info.image}}" />
+            <img src="{{prefix shop_info.image}}" />
           </div>
           <div class="col text-center">
             <h1>{{#if shop_info.name.value}}{{{shop_info.name.value}}}{{else}}{{{shop_info.name}}}{{/if}}</h1>
@@ -107,10 +107,10 @@
               </div>
             </div>
             <div class="food-imgs">
-                {{#if image}}<img src="{{image}}" class="ml-3 img-thumbnail align-top" />{{/if}}
+                {{#if image}}<img src="{{prefix image}}" class="ml-3 img-thumbnail align-top" />{{/if}}
                 {{#if name.google_image}}
                 <div class="ml-3 img-container">
-                  <img src="{{name.google_image}}" class="img-thumbnail align-top" />
+                  <img src="{{prefix name.google_image}}" class="img-thumbnail align-top" />
                   <div class="google-overlay"></div>
                 </div>
                 {{/if}}
@@ -139,7 +139,7 @@
             <div class="container-fluid pb-3">
               <div class="row d-flex flex-wrap align-items-center">
                 <div class="food-imgs">
-                  <img src="{{image}}" />
+                  <img src="{{prefix image}}" />
                 </div>
                 <div class="col">
                   <div>
@@ -195,6 +195,16 @@
 
       Handlebars.registerHelper("inc", function(num) {
         return ++num;
+      });
+
+      Handlebars.registerHelper("prefix", function(img) {
+        if (!img.startsWith("http:") && 
+            !img.startsWith("https:") &&
+            !img.startsWith("data:"))
+        {
+          img = "https://easi.com.au/static/uploads/photos/" + img;
+        }
+        return img;
       });
   
       Handlebars.registerPartial("menu-header", $("#menu-header-partial").html());
