@@ -11,6 +11,17 @@
             "args": ["--menus", "adl-menus", "--webdriver", "Firefox", "--webdriver-path", "geckodriver.exe", "--gapps", "${workspaceFolder}/gapps-credentials.json", "--log", "out.log"],
             "cwd": "${workspaceFolder}",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "name": "Python: EASI Translate Generate Index",
+            "type": "python",
+            "request": "launch",
+            "pythonPath": "${config:python.pythonPath}",
+            "program": "${workspaceFolder}/easi-translate.py",
+            "console": "integratedTerminal",
+            "args": ["--menus", "adl-menus-processed", "--generate-index", "--webdriver", "Firefox", "--webdriver-path", "geckodriver.exe", "--gapps", "${workspaceFolder}/gapps-credentials.json", "--log", "out-generate-index.log"],
+            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

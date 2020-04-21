@@ -1,0 +1,129 @@
+{
+    "code": 0,
+    "data": {
+        "categories": [
+            {
+                "id": 66152,
+                "image": "shop-category-default-image.png",
+                "items": [
+                    {
+                        "adjust_price": 0.0,
+                        "desc": "",
+                        "first_commodity": "",
+                        "first_commodity_id": "",
+                        "group_buy": 0,
+                        "group_price": 0,
+                        "id": 750056,
+                        "image": "https://easi.com.au/static/uploads/photos/p_20190217161033133195.jpg",
+                        "images": [
+                            "https://easi.com.au/static/uploads/photos/p_20190217161033133195.jpg"
+                        ],
+                        "is_multiple_sku": false,
+                        "is_registered_for_vat": 1,
+                        "is_sku": 1,
+                        "is_vat_included": 1,
+                        "mark_text": "",
+                        "name": {
+                            "value": "\u5983\u5b50\u7b11\u8354\u679d 3kg \u534a\u7bb1",
+                            "pinyin": "f\u0113i z\u01d0 xi\u00e0o l\u00ec zh\u012b b\u00e0n xi\u0101ng",
+                            "google_image": "data:image/jpeg;base64,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",
+                            "translation": "Feizixiao Litchi 3kg half box"
+                        },
+                        "option_groups": [],
+                        "org_price": 45.0,
+                        "price": 45.0,
+                        "second_commodity": "",
+                        "second_commodity_id": "",
+                        "seq": 1,
+                        "shop_id": 7247,
+                        "sku_id": 6554839,
+                        "status": 1,
+                        "stock": 998,
+                        "tobacco_alcohol": 0,
+                        "unit": 0,
+                        "update_time": "2019.02.17 16:10:34",
+                        "vat_rate": 0.1
+                    }
+                ],
+                "name": "Other",
+                "seq": 9999,
+                "shop_id": 7247
+            }
+        ],
+        "shop_info": {
+            "addr": {
+                "value": "22 Livingstone St, Torrensville \u5357\u6fb3\u5927\u5229\u4e9a\u5dde\u6fb3\u5927\u5229\u4e9a",
+                "pinyin": "n\u00e1n \u00e0o d\u00e0 l\u00ec y\u00e0 zh\u014du \u00e0o d\u00e0 l\u00ec y\u00e0",
+                "translation": "22 Livingstone St, Torrensville South Australia Australia"
+            },
+            "addr_remark": "",
+            "allow_pickup": 1,
+            "average_amount": null,
+            "avg_score": 0.0,
+            "brief_info": "",
+            "business": 0,
+            "business_info": {
+                "is_business": false,
+                "is_can_make_order": true,
+                "text": "Pre-order, opens at , Today 11:00 "
+            },
+            "cash_discount": null,
+            "contact_number": "0450871018 ",
+            "coupons": [],
+            "currency_symbol": "$",
+            "delivery_fee_discount": 0.0,
+            "delivery_fee_discount_condition": 0.0,
+            "delivery_fee_discount_type": 0,
+            "delivery_type": 0,
+            "desc": "",
+            "discount": 0.06,
+            "discount_type": 1,
+            "distance_text": "45 Mins Delivery",
+            "exclusive": null,
+            "has_coupon": false,
+            "has_delivery_fee_discount": 0,
+            "has_discount": false,
+            "hot_sale": null,
+            "id": 7247,
+            "image": "https://easi.com.au/static/uploads/photos/p_20180428154707263599.jpg",
+            "is_self_pick": true,
+            "is_support_delivery": true,
+            "is_third_delivery_fee": false,
+            "is_vat_included": true,
+            "location": "-34.9176782,138.5680747",
+            "merchant_coupon": {
+                "items": [],
+                "total_fee": 0
+            },
+            "name": {
+                "value": "\u6d77\u9c9c\u5c0f\u738b\u5b50",
+                "pinyin": "h\u01cei xi\u0101n xi\u01ceo w\u00e1ng z\u01d0",
+                "translation": "Seafood Little Prince"
+            },
+            "new_arrival": null,
+            "next_business_time": "Today 11:00 ",
+            "payment_info": {
+                "payment_type": 1,
+                "payment_type_name": "Pay Online"
+            },
+            "pickup_type": 0,
+            "platform_settlement_status": null,
+            "points": 0.0,
+            "points_text": "",
+            "ratings": null,
+            "real_contact_number": "0450871018 ",
+            "recommend": null,
+            "reviews_count": 0,
+            "seq": 105,
+            "shop_area_id": 26,
+            "shop_order_fee_discount": 0.0,
+            "shop_style_id": 0,
+            "shop_type": "restaurant",
+            "threshold_amount": 0.0,
+            "today_business_time": "11:00 - 17:00",
+            "type": 1,
+            "update_time": "2020.01.02 11:58:15",
+            "vat_rate": 0.1
+        }
+    }
+}

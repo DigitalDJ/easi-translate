@@ -64,9 +64,17 @@ def get_page(url, xpaths, driver):
 
     return results
 
+def parse_sold(shop_info):
+    num_sold = 0
+    if "brief_info" in shop_info and \
+        shop_info["brief_info"].endswith(" sold"):
+        num_sold = int(shop_info["brief_info"][:-len(" sold")])
+    return num_sold    
+
 def main():
     parser = argparse.ArgumentParser(description="EASI Translate")
     parser.add_argument("--menus", required=True, help="Path to Directory containing EASI Menu JSONs")
+    parser.add_argument("--generate-index", required=False, action="store_true", help="Just generate the index based on the directory containing EASI Menu JSONs")
     parser.add_argument("--webdriver", required=True, help="The type of Selenium WebDriver")
     parser.add_argument("--webdriver-path", required=True, help="Path to the Selenium WebDriver")
     parser.add_argument("--gapps", required=True, help="Path to Google Application Credentials JSON")
@@ -93,7 +101,7 @@ def main():
     os.environ["PATH"] += os.pathsep + os.path.dirname(os.path.abspath(args.webdriver_path))
     driver = getattr(webdriver, args.webdriver)()
 
-    shop_infos = { }
+    shop_infos = [ ]
 
     menus = glob.glob(os.path.join(args.menus, "*.json"))
     for i, path in enumerate(menus):
@@ -103,71 +111,73 @@ def main():
             menu_json = json.load(f)
 
         shop_info = menu_json["data"]["shop_info"]
-        shop_infos[shop_info["id"]] = shop_info
+        shop_infos.append(shop_info)
 
-        all_translation_values = [ ]
-        for value, key, context in traverse_json(menu_json, valid_translate_value):
-            all_translation_values.append(value)
+        if not args.generate_index:
+            all_translation_values = [ ]
+            for value, key, context in traverse_json(menu_json, valid_translate_value):
+                all_translation_values.append(value)
 
-        translation_response = None
-        try:
-            translation_response = google_client.translate_text(
-                parent=google_parent,
-                contents=all_translation_values,
-                mime_type="text/html", 
-                source_language_code="zh-cn",
-                target_language_code="en"
-            )
-        except Exception as e:
-            logging.error(f"Failed (Google) for {path} ({e})")
+            translation_response = None
+            try:
+                translation_response = google_client.translate_text(
+                    parent=google_parent,
+                    contents=all_translation_values,
+                    mime_type="text/html", 
+                    source_language_code="zh-cn",
+                    target_language_code="en"
+                )
+            except Exception as e:
+                logging.error(f"Failed (Google) for {path} ({e})")
 
-        for j, vkc in enumerate(traverse_json(menu_json, valid_translate_value)):
-            logging.info(f"{j + 1} / {len(all_translation_values)}")
-            
-            value, key, context = vkc
-
-            context[key] = { 
-                "value": value, 
-            }
-
-            pinyin_value = strip_ascii(value).strip()
-            if len(pinyin_value) > 0:
-                context[key]["pinyin"] = pinyin.get(strip_ascii(value), delimiter=" ")
-            
-            if "price" in context:
-                google_search = None
-                while google_search is None:
-                    google_search = get_page(f"https://www.google.com/search?q={urllib.parse.quote(value)}", [
-                            ("//*[contains(@class,'kno-ecr-pt')]/span", "text"), 
-                            ("//*[contains(@class,'kno-ecr-pt')]/following-sibling::node()/span", "text")
-                        ], driver)
-                    if google_search is None:
-                        driver = getattr(webdriver, args.webdriver)()
+            for j, vkc in enumerate(traverse_json(menu_json, valid_translate_value)):
+                logging.info(f"{j + 1} / {len(all_translation_values)}")
                 
-                google_img_search = None
-                while google_img_search is None:
-                    google_img_search = get_page(f"https://www.google.com/search?tbm=isch&q={urllib.parse.quote(value)}+food", [
-                            ("//*[contains(@class,'rg_i')]", "@src")
-                        ], driver)
-                    if google_search is None:
-                        driver = getattr(webdriver, args.webdriver)()
+                value, key, context = vkc
 
-                if len(google_search) > 0:
-                    context[key]["knowledge_graph"] = google_search[0]
+                context[key] = { 
+                    "value": value, 
+                }
 
-                if len(google_img_search) > 0:
-                    context[key]["google_image"] = google_img_search[0]
+                pinyin_value = strip_ascii(value).strip()
+                if len(pinyin_value) > 0:
+                    context[key]["pinyin"] = pinyin.get(strip_ascii(value), delimiter=" ")
+                
+                if "price" in context:
+                    google_search = None
+                    while google_search is None:
+                        google_search = get_page(f"https://www.google.com/search?q={urllib.parse.quote(value)}", [
+                                ("//*[contains(@class,'kno-ecr-pt')]/span", "text"), 
+                                ("//*[contains(@class,'kno-ecr-pt')]/following-sibling::node()/span", "text")
+                            ], driver)
+                        if google_search is None:
+                            driver = getattr(webdriver, args.webdriver)()
+                    
+                    google_img_search = None
+                    while google_img_search is None:
+                        google_img_search = get_page(f"https://www.google.com/search?tbm=isch&q={urllib.parse.quote(value)}+food", [
+                                ("//*[contains(@class,'rg_i')]", "@src")
+                            ], driver)
+                        if google_search is None:
+                            driver = getattr(webdriver, args.webdriver)()
 
-                time.sleep(0.5)
+                    if len(google_search) > 0:
+                        context[key]["knowledge_graph"] = google_search[0]
 
-            if translation_response and j < len(translation_response.translations):
-                context[key]["translation"] = translation_response.translations[j].translated_text
-        try:
-            with open(f"menu.{os.path.splitext(path)[0]}-processed.json", "w") as f:
-                f.write(json.dumps(menu_json, indent=4))
-        except Exception as e:
-            logging.error(f"Failed (Writing) for {path} ({e})")
+                    if len(google_img_search) > 0:
+                        context[key]["google_image"] = google_img_search[0]
 
+                    time.sleep(0.5)
+
+                if translation_response and j < len(translation_response.translations):
+                    context[key]["translation"] = translation_response.translations[j].translated_text
+            try:
+                with open(f"menu.{os.path.splitext(path)[0]}-processed.json", "w") as f:
+                    f.write(json.dumps(menu_json, indent=4))
+            except Exception as e:
+                logging.error(f"Failed (Writing) for {path} ({e})")
+
+    shop_infos.sort(key=lambda x: parse_sold(x), reverse=True)
     try:
         with open(os.path.join(os.path.dirname(path), "index.json"), "w") as f:
             f.write(json.dumps(shop_infos, indent=4))
