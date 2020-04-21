@@ -55,7 +55,7 @@
           <div class="col shop-img">
             <img src="{{shop_info.image}}" />
           </div>
-          <div class="col-6 text-center">
+          <div class="col text-center">
             <h1>{{#if shop_info.name.value}}{{{shop_info.name.value}}}{{else}}{{{shop_info.name}}}{{/if}}</h1>
             {{#if shop_info.name.value}}<h3>{{{shop_info.name.translation}}}</h3>{{/if}}
             {{#if shop_info.name.value}}<h4>{{{shop_info.name.pinyin}}}</h4>{{/if}}
@@ -135,21 +135,23 @@
         <form class="d-none"><input id="menu-index-file" name="menu-index-file" type="file"></form>
         <ul class="list-group list-group-flush">
           {{#each .}}
-          {{log .}}
           <li class="list-group-item">
             <div class="container-fluid pb-3">
               <div class="row d-flex flex-wrap align-items-center">
-                <div class="col food-imgs">
+                <div class="food-imgs">
                   <img src="{{image}}" />
                 </div>
-                <div class="col-11">
+                <div class="col">
                   <div>
                     <a href="#" class="menu-title" data-id="{{id}}">{{#if name.value}}{{{name.value}}} (ID #{{{id}}}){{else}}{{{name}}} (ID #{{{id}}}){{/if}}</a>
                   </div>
                   {{#if name.value}}<div class="font-italic">{{{name.translation}}}</div>{{/if}}
                   {{#if name.value}}<div class="font-italic">{{{name.pinyin}}}</div>{{/if}}
-                  <div>{{{addr}}} {{#if addr_remark}}({{{addr_remark}}}){{/if}}</div>
-                  <div>{{{contact_number}}}</div>
+                  {{#if addr.value}}<div>{{{addr.value}}}<br />{{{addr.translation}}}<br />{{{addr.pinyin}}}</div>{{else}}
+                  {{#if addr}}<div>{{{addr}}}</div>{{/if}}{{/if}}
+                  {{#if addr_remark.value}}<div>{{{addr_remark.value}}}<br />{{{addr_remark.translation}}}<br />{{{addr_remark.pinyin}}}</div>{{else}}
+                  {{#if addr_remark}}<div>{{{addr_remark}}}</div>{{/if}}{{/if}}
+                  <div>{{#if contact_number.value}}{{{contact_number.value}}}{{else}}{{{contact_number}}}{{/if}}</div>
                   <div>{{{today_business_time}}}</div>
                   <div>
                     {{#if allow_pickup}}<span class="badge badge-info">Allows Pickup</span>{{/if}}
@@ -225,6 +227,7 @@
                 $("#menu-index-file").on("change", function(e) { loadFile(this, e); });
                 $(".menu-title").click(function(e) {
                   $("#menu-index-file").attr("accept", "." + $(e.target).attr("data-id") + "-processed.json");
+                  $("#menu-file").val(null);
                   $("#menu-index-file").click();
                 });
               }
