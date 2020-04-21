@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>EASI Translate</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.4.1/darkly/bootstrap.min.css" integrity="sha384-rCA2D+D9QXuP2TomtQwd+uP50EHjpafN+wruul0sXZzX/Da7Txn4tB9aLMZV4DZm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.css" integrity="sha384-eS4bw6aEvhCSXWGP85ANR/N8isWKzT7P36NvcuTJGkrj6wsbxLVpXslrNXYHyseD" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.slim.js" integrity="sha384-DdjDfac4Pzu5FxE2PLZAXDaeKZVn/0/nxOGF0PrDzxZSG5jZmCl5W+XqneT/QuEb" crossorigin="anonymous"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.3.3/umd/popper.min.js" integrity="sha384-Xrh7f7c2SnWPrEkzN//b59XZApxRm0EQzzFNKjfWuq76tLKKG7WMtVymnlHTrHgR" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.bundle.min.js" integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.min.js" integrity="sha384-xfAFAqnRGpBFQneGOv4y7mbkBPfQ7OUQ9WWqf47YYnwkSx4gnk0ADnPpQvxszNU9" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.js" integrity="sha384-wKOriz2x8/bF1D9t6PuKhSpxfhHeVi9huvyuxJrrShSJpi5+rmRIsM90UuWbdAYJ" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" integrity="sha384-ujbKXb9V3HdK7jcWL6kHL1c+2Lj4MR4Gkjl7UtwpSHg/ClpViddK9TI7yU53frPN" crossorigin="anonymous"></script>
+    <style>
+      #map {
+        height: 250px;
+      }
+
+      .img-container {
+        display: inline-block;
+        position: relative;
+      }
+
+      .img-container:hover .google-overlay {
+        opacity: 1;
+      }
+
+      .food-imgs img {
+        max-width: 100px;
+      }
+
+      .shop-img img {
+        max-height: 250px;
+      }
+
+      .google-overlay {
+        background-repeat: no-repeat;
+        background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAaCAYAAABCfffNAAAACXBIWXMAAC4jAAAuIwF4pT92AAAHwmlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNi4wLWMwMDIgNzkuMTY0MzUyLCAyMDIwLzAxLzMwLTE1OjUwOjM4ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdGVEYXRlPSIyMDIwLTA0LTIxVDExOjIzOjE2KzA5OjMwIiB4bXA6TW9kaWZ5RGF0ZT0iMjAyMC0wNC0yMVQxMToyNDowOSswOTozMCIgeG1wOk1ldGFkYXRhRGF0ZT0iMjAyMC0wNC0yMVQxMToyNDowOSswOTozMCIgZGM6Zm9ybWF0PSJpbWFnZS9wbmciIHBob3Rvc2hvcDpDb2xvck1vZGU9IjMiIHBob3Rvc2hvcDpJQ0NQcm9maWxlPSJzUkdCIElFQzYxOTY2LTIuMSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowZWRhY2MzNS0yNTBkLWQwNDItOWM5NS00ZGYzY2I4YWUwMjciIHhtcE1NOkRvY3VtZW50SUQ9ImFkb2JlOmRvY2lkOnBob3Rvc2hvcDowNmU2Zjc0OC0yY2ExLWI1NDktYmYyZi02NGNjNDQ1ZjA0ZTUiIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDpjZTkwZTI3Ni1kNjA1LTk1NGEtYjhiNi1jZDRiYTYyNDIzZDYiPiA8eG1wTU06SGlzdG9yeT4gPHJkZjpTZXE+IDxyZGY6bGkgc3RFdnQ6YWN0aW9uPSJzYXZlZCIgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDpjZTkwZTI3Ni1kNjA1LTk1NGEtYjhiNi1jZDRiYTYyNDIzZDYiIHN0RXZ0OndoZW49IjIwMjAtMDQtMjFUMTE6MjQ6MDkrMDk6MzAiIHN0RXZ0OnNvZnR3YXJlQWdlbnQ9IkFkb2JlIFBob3Rvc2hvcCAyMS4xIChXaW5kb3dzKSIgc3RFdnQ6Y2hhbmdlZD0iLyIvPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0iY29udmVydGVkIiBzdEV2dDpwYXJhbWV0ZXJzPSJmcm9tIGFwcGxpY2F0aW9uL3ZuZC5hZG9iZS5waG90b3Nob3AgdG8gaW1hZ2UvcG5nIi8+IDxyZGY6bGkgc3RFdnQ6YWN0aW9uPSJkZXJpdmVkIiBzdEV2dDpwYXJhbWV0ZXJzPSJjb252ZXJ0ZWQgZnJvbSBhcHBsaWNhdGlvbi92bmQuYWRvYmUucGhvdG9zaG9wIHRvIGltYWdlL3BuZyIvPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0ic2F2ZWQiIHN0RXZ0Omluc3RhbmNlSUQ9InhtcC5paWQ6MGVkYWNjMzUtMjUwZC1kMDQyLTljOTUtNGRmM2NiOGFlMDI3IiBzdEV2dDp3aGVuPSIyMDIwLTA0LTIxVDExOjI0OjA5KzA5OjMwIiBzdEV2dDpzb2Z0d2FyZUFnZW50PSJBZG9iZSBQaG90b3Nob3AgMjEuMSAoV2luZG93cykiIHN0RXZ0OmNoYW5nZWQ9Ii8iLz4gPC9yZGY6U2VxPiA8L3htcE1NOkhpc3Rvcnk+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOmNlOTBlMjc2LWQ2MDUtOTU0YS1iOGI2LWNkNGJhNjI0MjNkNiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpjZTkwZTI3Ni1kNjA1LTk1NGEtYjhiNi1jZDRiYTYyNDIzZDYiIHN0UmVmOm9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDpjZTkwZTI3Ni1kNjA1LTk1NGEtYjhiNi1jZDRiYTYyNDIzZDYiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4IvRkAAAABkElEQVRIx92VvUvDQBTAMwiiiwFHQYKzQxArgojxY3MpOOl0m2t2BzNYXISCg05ySwcHpR10KBXyJ2RxFK5zRQIqgjqc75VLSUPucpd08uC3vbvfvY9LLEuxBrs1GyBAG2AAzxABTcC1yizYGABxzsEyQm0ZBoob8pL4OoK4giDBkwmcCQmIKouiEmHzfbwlUBcNZyYCv6ChjsZeouzFx9mCrExUc1hsZcDv0xQB+NfVPH/dXxl7A9akFggoSpDv+1n+drSsnpCSEpZIkJ+Haf5+sijNYqfx6QCBAb6VFqQIFBIP4CbIJOTfSCZeLpaVvHRtVeNdIJTAZBKaFnQel/jq7QFiPMJwYJQjCUePMe7N8NNOLREgkaFAVsbmMKDfnYsP7/bSggSqKbBlpcLyDoPgMD9HMMoIkH4gsayblz2ZIMwGRwoR0haX8YA6EKT3bFy38iReVuIAcYFIyfpNg2+fD8Z7kZO6W1W01jrmWxfP6l4KUVRBRLVHUtTcJCuGvTL+DcAmGyCi6UwyebTo8D/kMrgKh7WaGQAAAABJRU5ErkJggg==');     
+        height: 100%;
+        left: 0;
+        opacity: 0;
+        position: absolute;
+        top: 0;
+        transition: opacity 500ms ease-in-out;
+        width: 100%;
+      }
+    </style>
+
+    <script id="menu-header-partial" type="text/x-handlebars-template">
+      <div class="container-fluid pb-3">
+        <div class="row d-flex flex-wrap align-items-center">
+          <div class="col shop-img">
+            <img src="{{shop_info.image}}" />
+          </div>
+          <div class="col-6 text-center">
+            <h1>{{#if shop_info.name.value}}{{{shop_info.name.value}}}{{else}}{{{shop_info.name}}}{{/if}}</h1>
+            {{#if shop_info.name.value}}<h3>{{{shop_info.name.translation}}}</h3>{{/if}}
+            {{#if shop_info.name.value}}<h4>{{{shop_info.name.pinyin}}}</h4>{{/if}}
+            <div>{{{shop_info.addr}}}</div>
+            <div>{{{shop_info.contact_number}}}</div>
+            <div>{{{shop_info.today_business_time}}}</div>
+          </div>
+          <div id="map" class="col" data-location="{{{shop_info.location}}}"></div>
+        </div>
+      </div>
+    </script>
+
+    <script id="accordion-partial" type="text/x-handlebars-template">
+      <div id="accordion-{{index}}" class="accordion">
+        {{#each (getIterator this iters depth)}}
+          {{> card index=../index depth=../depth iters=../iters}}
+        {{/each}}
+      </div>
+    </script>
+
+    <script id="card-partial" type="text/x-handlebars-template">
+      <div class="card">
+          {{> card-header index=index depth=depth iters=iters}}
+          {{#if (isNotLastIterator . iters depth)}}{{> card-body index=index depth=depth iters=iters}}{{/if}}
+      </div>
+    </script>
+
+    <script id="card-header-partial" type="text/x-handlebars-template">
+      <div class="card-header" id="heading{{index}}-{{@index}}">
+          <div class="d-flex justify-content-between">
+            <div class="d-flex flex-column justify-content-between">
+              <div>
+                {{#if (isNotLastIterator . iters depth)}}
+                <a href="#" data-toggle="collapse" data-target="#collapse{{index}}-{{@index}}">
+                {{/if}}
+                  {{#if name.value}}
+                    {{{name.value}}} ({{{name.translation}}})
+                  {{else}}
+                    {{{name}}}
+                  {{/if}}
+                {{#if (isNotLastIterator . iters depth)}}
+                </a>
+                {{/if}}
+                {{#if price}}<div>{{@root.shop_info.currency_symbol}}{{toFixed2 price}}</div>{{/if}}
+              </div>
+              <div>
+                {{#if name.pinyin}}<div class="font-italic">{{{name.pinyin}}}</div>{{/if}}
+                {{#if name.knowledge_graph}}<div class="font-italic">{{{name.knowledge_graph}}}</div>{{/if}}
+              </div>
+            </div>
+            <div class="food-imgs">
+                {{#if image}}<img src="{{image}}" class="ml-3 img-thumbnail align-top" />{{/if}}
+                {{#if name.google_image}}
+                <div class="ml-3 img-container">
+                  <img src="{{name.google_image}}" class="img-thumbnail align-top" />
+                  <div class="google-overlay"></div>
+                </div>
+                {{/if}}
+            </div>
+          </div>
+      </div>
+    </script>
+
+    <script id="card-body-partial" type="text/x-handlebars-template">
+      <div id="collapse{{index}}-{{@index}}" class="card-body collapse" aria-labelledby="heading{{index}}-{{@index}}" data-parent="#accordion-{{index}}">
+          {{> accordion index=(storeInc @root "index") depth=(inc depth) iters=iters}}
+      </div>
+    </script>
+
+    <script id="menu-template" type="text/x-handlebars-template">
+      {{> menu-header}}
+      {{> accordion index=(storeInc @root "index") depth=0 iters="categories,items,option_groups,options"}}
+    </script>
+
+    <script id="index-template" type="text/x-handlebars-template">
+      <div class="card">
+        <form class="d-none"><input id="menu-index-file" name="menu-index-file" type="file"></form>
+        <ul class="list-group list-group-flush">
+          {{#each .}}
+          {{log .}}
+          <li class="list-group-item">
+            <div class="container-fluid pb-3">
+              <div class="row d-flex flex-wrap align-items-center">
+                <div class="col food-imgs">
+                  <img src="{{image}}" />
+                </div>
+                <div class="col-11">
+                  <div>
+                    <a href="#" class="menu-title" data-id="{{id}}">{{#if name.value}}{{{name.value}}}{{else}}{{{name}}} (ID #{{id}}){{/if}}</a>
+                  </div>
+                  {{#if name.value}}<div class="font-italic">{{{name.translation}}}</div>{{/if}}
+                  {{#if name.value}}<div class="font-italic">{{{name.pinyin}}}</h4>{{/if}}
+                  <div>{{{addr}}} {{#if addr_remark}}({{{addr_remark}}}){{/if}}</div>
+                  <div>{{{contact_number}}}</div>
+                  <div>{{{today_business_time}}}</div>
+                  <div>
+                    {{#if allow_pickup}}<span class="badge badge-info">Allows Pickup</span>{{/if}}
+                    {{#if is_support_delivery}}<span class="badge badge-info">Allows Delivery</span>{{/if}}
+                    {{#if payment_info.payment_type_name}}<span class="badge badge-info">{{payment_info.payment_type_name}}</span>{{/if}}
+                    {{#if brief_info}}<span class="badge badge-info">{{brief_info}}</span>{{/if}}
+                    {{#if points}}<span class="fas fa-star text-warning"></span> {{{points}}} ({{{reviews_count}}}){{/if}}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+    </script>
+
+    <script>
+      Handlebars.registerHelper("isNotLastIterator", function(context, iters, depth) {
+        var itersArr = iters.split(",");
+        return itersArr[++depth] !== undefined &&
+               context[itersArr[depth]] !== undefined && 
+               context[itersArr[depth]].length > 0;
+      });
+
+      Handlebars.registerHelper("getIterator", function(context, iters, depth) {
+        var itersArr = iters.split(",");
+        return context[itersArr[depth]];
+      });
+
+      Handlebars.registerHelper("toFixed2", function(num) {
+        return num.toFixed(2);
+      });
+
+      Handlebars.registerHelper("storeInc", function(o, field) {
+        if (field in o)
+          return ++o[field];
+        else
+          return o[field] = 0;
+      });
+
+      Handlebars.registerHelper("inc", function(num) {
+        return ++num;
+      });
+  
+      Handlebars.registerPartial("menu-header", $("#menu-header-partial").html());
+      Handlebars.registerPartial("accordion", $("#accordion-partial").html());
+      Handlebars.registerPartial("card", $("#card-partial").html());
+      Handlebars.registerPartial("card-header", $("#card-header-partial").html());
+      Handlebars.registerPartial("card-body", $("#card-body-partial").html());
+      var menu_template = Handlebars.compile($("#menu-template").html());
+      var index_template = Handlebars.compile($("#index-template").html());
+
+      $(document).ready(function() {
+        function loadFile(ctx, e)
+        {
+          if (ctx.files.length > 0)
+            var file = ctx.files[0];
+            var reader = new FileReader();
+            $(reader).on("load", function() {
+              var data = JSON.parse(reader.result);
+              if (data.data)
+              {
+                $("#menu").html(menu_template(data.data));  
+                var loc = $("#map").attr("data-location").split(",", 2).map(x => parseFloat(x));
+                var map = L.map("map").setView(loc, 16);
+                L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
+                L.marker(loc).addTo(map);            
+              }
+              else
+              {
+                $("#menu").html(index_template(data));
+                $("#menu-index-file").on("change", function(e) { loadFile(this, e); });
+                $(".menu-title").click(function(e) {
+                  $("#menu-index-file").attr("accept", "." + $(e.target).attr("data-id") + "-processed.json");
+                  $("#menu-index-file").click();
+                });
+              }
+            });
+            reader.readAsText(file);
+        }
+
+        $("#menu-file").on("change", function(e) { loadFile(this, e); });
+      });
+    </script>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row pt-3">
+        <div class="col">
+          <form>
+            <div class="form-group">
+              <label for="menu-file">Select Index or Menu</label>
+              <input id="menu-file" name="menu-file" class="form-control-file" type="file" accept=".json">
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="row">
+        <div id="menu" class="col"></div>
+      </div>
+    </div>
+  </body>
+</html>
