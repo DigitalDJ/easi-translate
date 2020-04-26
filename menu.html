@@ -31,6 +31,10 @@
       .food-imgs img {
         max-width: 100px;
       }
+      
+      .selected {
+        filter: opacity(50%);
+      }
 
       .shop-img img {
         max-height: 250px;
@@ -62,6 +66,7 @@
             <div>{{{shop_info.addr}}}</div>
             <div>{{{shop_info.contact_number}}}</div>
             <div>{{{shop_info.today_business_time}}}</div>
+            <a id="save-selections" href="#" download="menu.{{shop_info.id}}-selections.json" type="application/json">Save Selections</a>
           </div>
           <div id="map" class="col" data-location="{{{shop_info.location}}}"></div>
         </div>
@@ -77,7 +82,7 @@
     </script>
 
     <script id="card-partial" type="text/x-handlebars-template">
-      <div class="card">
+      <div class="card" id="{{storeInc . @root "itemIndex"}}">
           {{> card-header index=index depth=depth iters=iters}}
           {{#if (isNotLastIterator . iters depth)}}{{> card-body index=index depth=depth iters=iters}}{{/if}}
       </div>
@@ -121,13 +126,13 @@
 
     <script id="card-body-partial" type="text/x-handlebars-template">
       <div id="collapse{{index}}-{{@index}}" class="card-body collapse" aria-labelledby="heading{{index}}-{{@index}}" data-parent="#accordion-{{index}}">
-          {{> accordion index=(storeInc @root "index") depth=(inc depth) iters=iters}}
+          {{> accordion index=(storeInc . @root "index") depth=(inc depth) iters=iters}}
       </div>
     </script>
 
     <script id="menu-template" type="text/x-handlebars-template">
       {{> menu-header}}
-      {{> accordion index=(storeInc @root "index") depth=0 iters="categories,items,option_groups,options"}}
+      {{> accordion index=(storeInc . @root "index") depth=0 iters="categories,items,option_groups,options"}}
     </script>
 
     <script id="index-template" type="text/x-handlebars-template">
@@ -186,11 +191,13 @@
         return num.toFixed(2);
       });
 
-      Handlebars.registerHelper("storeInc", function(o, field) {
+      Handlebars.registerHelper("storeInc", function(curr, o, field) {
         if (field in o)
-          return ++o[field];
+          ++o[field];
         else
-          return o[field] = 0;
+          o[field] = 0;
+        curr["relidx"] = o[field];
+        return o[field];
       });
 
       Handlebars.registerHelper("inc", function(num) {
@@ -223,15 +230,44 @@
             var reader = new FileReader();
             $(reader).on("load", function() {
               var data = JSON.parse(reader.result);
+              // Menu
               if (data.data)
               {
-                $("#menu").html(menu_template(data.data));  
+                $("#menu").html(menu_template(data.data));
+                $(".card").click(function(e) {
+                    if ($(e.target).is("a"))
+                      return;
+
+                    var target = $(e.target).closest(".card").get(0);
+                    if (this == target)
+                    {
+                      var hdr = $(target).children(".card-header").first();
+                      if ($(hdr).hasClass("selected"))
+                      {
+                        $(hdr).removeClass("selected");
+                      }
+                      else
+                      {
+                        $(hdr).addClass("selected");
+                      }
+                    }
+                });
                 var loc = $("#map").attr("data-location").split(",", 2).map(x => parseFloat(x));
                 var map = L.map("map").setView(loc, 16);
                 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
                 L.marker(loc).addTo(map);            
+                $("#save-selections").click(function(e) {
+                  var d = { };
+                  $(".card").each(function(idx) {
+                    console.log(this);
+                    d[$(this).attr("id")] = $(this).children(".card-header").first().hasClass("selected");
+                  });
+                  console.log(d);
+                  $("#save-selections").attr("href", URL.createObjectURL(new Blob([JSON.stringify(d)])));
+                });
               }
-              else
+              // Index
+              else if ($.isArray(data))
               {
                 $("#menu").html(index_template(data));
                 $("#menu-index-file").on("change", function(e) { loadFile(this, e); });
@@ -239,6 +275,27 @@
                   $("#menu-index-file").attr("accept", "." + $(e.target).attr("data-id") + "-processed.json");
                   $("#menu-file").val(null);
                   $("#menu-index-file").click();
+                });
+              }
+              // Selections
+              else
+              {
+                $.each(data, function (k, v) 
+                {
+                  var el = $("#" + k);
+                  if (el)
+                  {
+                    var hdr = $(el).children(".card-header").first()
+                    $(hdr).removeClass("selected");
+                    if (v)
+                    {
+                      $(hdr).addClass("selected");  
+                    }
+                    else
+                    {
+                      $(hdr).removeClass("selected");
+                    }
+                  }
                 });
               }
             });
@@ -255,7 +312,7 @@
         <div class="col">
           <form>
             <div class="form-group">
-              <label for="menu-file">Select Index or Menu</label>
+              <label for="menu-file">Select Index, Menu or Selections</label>
               <input id="menu-file" name="menu-file" class="form-control-file" type="file" accept=".json">
             </div>
           </form>
